@@ -25,7 +25,7 @@ bot.on("message", async message => {
   let args = util.discord.getAllArgs(message);
   const command = util.discord.getCommand(args);
 
-  if (command === "dictionary") {
+  if (command === "define") {
     if (args.length > 0) {
       console.log(
         `Command [${config.prefix + command}] Received from ${
@@ -48,21 +48,40 @@ bot.on("message", async message => {
 
       https
         .get(options, res => {
-          let data = "";
+          if (res.statusCode === 404) {
+            message.channel.send(
+              "I couldn't find the word you were looking for :cry:"
+            );
+            return;
+          }
 
-          res.on("data", chunk => {
-            data += chunk;
-          });
+          if (res.statusCode === 200) {
+            let data = "";
 
-          res.on("end", () => {
-            definition = JSON.parse(data).results[0].lexicalEntries[0]
-              .entries[0].senses[0].definitions[0];
-            message.channel.send(`${word} is defined as: "${definition}"`);
-          });
+            res.on("data", chunk => {
+              data += chunk;
+            });
+
+            res.on("end", () => {
+              definition = JSON.parse(data).results[0].lexicalEntries[0]
+                .entries[0].senses[0].definitions[0];
+              message.channel.send(`${word} is defined as: "${definition}"`);
+            });
+
+            return;
+          } else {
+            message.channel.send(
+              "There was an error with your request :thinking:"
+            );
+          }
         })
         .on("error", err => {
           console.log("Error: ", err);
         });
+    } else {
+      message.channel.send(
+        "Please specify the word you would like to define! :smile:"
+      );
     }
   }
 });
