@@ -5,7 +5,7 @@ const discord = {
   getOnlineUsers: users => {
     let onlineUsers = [];
     users.forEach(user => {
-      if (user.presence.status === "online") {
+      if (user.presence.status === "online" && !user.bot) {
         onlineUsers.push(user);
       }
     });
