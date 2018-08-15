@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 const config = require("./config.json");
 const util = require("./util");
-const http = require("http");
+const https = require("https");
 
 const bot = new Discord.Client();
 
@@ -27,7 +27,35 @@ bot.on("message", async message => {
       } at ${util.helpers.convertTime(message.createdTimestamp)}`
     );
 
-    http.get({});
+    const word = "test";
+
+    const options = {
+      hostname: "od-api.oxforddictionaries.com",
+      path: `/api/v1/entries/en/${word}`,
+      headers: {
+        app_id: "9e0315b8",
+        app_key: "59cccf9d0c734fd1c5a1f46030375ac5"
+      }
+    };
+
+    https
+      .get(options, res => {
+        let data = "";
+
+        res.on("data", chunk => {
+          data += chunk;
+        });
+
+        res.on("end", () => {
+          console.log(
+            JSON.parse(data).results[0].lexicalEntries[0].entries[0].senses[0]
+              .definitions[0]
+          );
+        });
+      })
+      .on("error", err => {
+        console.log("Error: ", err);
+      });
 
     const m = await message.channel.send("Pong!");
   }
