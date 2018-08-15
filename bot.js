@@ -25,6 +25,10 @@ bot.on("message", async message => {
   let args = util.discord.getAllArgs(message);
   const command = util.discord.getCommand(args);
 
+  let botEmbed = {
+    color: 000000
+  };
+
   if (command === "define") {
     if (args.length > 0) {
       console.log(
@@ -65,7 +69,20 @@ bot.on("message", async message => {
             res.on("end", () => {
               definition = JSON.parse(data).results[0].lexicalEntries[0]
                 .entries[0].senses[0].definitions[0];
-              message.channel.send(`${word} is defined as: "${definition}"`);
+
+              // Capitalise the first letter
+              definition =
+                definition.charAt(0).toUpperCase() + definition.slice(1);
+
+              let field = {
+                name: word,
+                value: definition
+              };
+
+              botEmbed.title = "Definition";
+              botEmbed.fields = [field];
+              // message.channel.send(`${word} is defined as: "${definition}"`);
+              message.channel.send({ embed: botEmbed });
             });
 
             return;
