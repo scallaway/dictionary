@@ -1,17 +1,11 @@
 // We need access to the information within the config file
-const config = require('./config.json');
+const config = require("./config.json");
 
 const discord = {
-  /**
-   * Gets the current number of Online Users on the server
-   * that the bot has just connected to.
-   * @param users A Collection of all users on the server
-   * @returns The number of online users
-   */
-  getOnlineUsers: (users) => {
+  getOnlineUsers: users => {
     let onlineUsers = [];
     users.forEach(user => {
-      if (user.presence.status === 'online') {
+      if (user.presence.status === "online") {
         onlineUsers.push(user);
       }
     });
@@ -19,25 +13,44 @@ const discord = {
     return onlineUsers.length;
   },
 
-  /**
-   * Gets the first command from the message that was sent.
-   * @param message A message object
-   * @return The command that was issued
-   */
-  getCommand: (message) => {
-    const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
+  getAllArgs: message => {
+    return message.content
+      .slice(config.prefix.length)
+      .trim()
+      .split(/ +/g);
+  },
+
+  getCommand: args => {
     return args.shift().toLowerCase();
+  },
+
+  getVoiceChannels: channels => {
+    let voiceChannels = [];
+
+    channels.forEach(channel => {
+      if (channel.type === "voice") {
+        voiceChannels.push(channel);
+      }
+    });
+
+    return voiceChannels.length;
+  },
+
+  getTextChannels: channels => {
+    let textChannels = [];
+
+    channels.forEach(channel => {
+      if (channel.type === "text") {
+        textChannels.push(channel);
+      }
+    });
+
+    return textChannels.length;
   }
 };
 
 const helpers = {
-  /**
-   * A simple function for converting the timestamp to a
-   * readable format.
-   * @param time A Discord timestamp
-   * @return A string of the Date and Time
-   */
-  convertTime: (time) => {
+  convertTime: time => {
     return new Date(time).toString();
   }
 };
