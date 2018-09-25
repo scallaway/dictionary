@@ -41,7 +41,7 @@ bot.on("message", async message => {
 
       const options = {
         hostname: "od-api.oxforddictionaries.com",
-        path: `/api/v1/entries/en/${word}`,
+        path: `/api/v1/entries/en/${word}/definitions`,
         headers: {
           app_id: config.app_id,
           app_key: config.app_key
