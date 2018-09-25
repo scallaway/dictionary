@@ -77,6 +77,8 @@ const http = {
           message: "I couldn't find the word you were looking for :cry:",
           data: {}
         });
+
+        return;
       }
 
       // If the request is successful
@@ -100,6 +102,8 @@ const http = {
               definition
             }
           });
+
+          return;
         });
       } else {
         callback({
