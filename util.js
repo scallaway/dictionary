@@ -67,7 +67,7 @@ const http = {
       }
     };
 
-    const definition;
+    let definition;
 
     https.get(options, res => {
       // Capture the error
@@ -112,12 +112,7 @@ const http = {
   },
 
   generateDefinition: data => {
-    return JSON
-      .parse(data)
-      .results[0]
-      .lexicalEntries[0]
-      .entries[0]
-      .senses[0]
+    return JSON.parse(data).results[0].lexicalEntries[0].entries[0].senses[0]
       .definitions[0];
   }
 };
