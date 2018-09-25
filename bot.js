@@ -41,6 +41,8 @@ bot.on("message", async message => {
       util.http.getDefinition(word, response => {
         if (response.status === 404) {
           message.channel.send(response.message);
+
+          return;
         }
 
         if (response.status === 200) {
