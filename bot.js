@@ -39,62 +39,24 @@ bot.on("message", async message => {
 
       const word = args[0];
 
-      const options = {
-        hostname: "od-api.oxforddictionaries.com",
-        path: `/api/v1/entries/en/${word}/definitions`,
-        headers: {
-          app_id: config.app_id,
-          app_key: config.app_key
+      util.http.getDefinition(word, response => {
+        if (response.status === 404) {
+          message.channel.send(response.message);
         }
-      };
 
-      let definition;
+        if (response.status === 200) {
+          let field = {
+            name: word,
+            value: response.data.definition
+          };
 
-      https
-        .get(options, res => {
-          if (res.statusCode === 404) {
-            message.channel.send(
-              "I couldn't find the word you were looking for :cry:"
-            );
-            return;
-          }
-
-          if (res.statusCode === 200) {
-            let data = "";
-
-            res.on("data", chunk => {
-              data += chunk;
-            });
-
-            res.on("end", () => {
-              definition = JSON.parse(data).results[0].lexicalEntries[0]
-                .entries[0].senses[0].definitions[0];
-
-              // Capitalise the first letter
-              definition =
-                definition.charAt(0).toUpperCase() + definition.slice(1);
-
-              let field = {
-                name: word,
-                value: definition
-              };
-
-              botEmbed.title = "Definition";
-              botEmbed.fields = [field];
-              // message.channel.send(`${word} is defined as: "${definition}"`);
-              message.channel.send({ embed: botEmbed });
-            });
-
-            return;
-          } else {
-            message.channel.send(
-              "There was an error with your request :thinking:"
-            );
-          }
-        })
-        .on("error", err => {
-          console.log("Error: ", err);
-        });
+          botEmbed.title = "Definition";
+          botEmbed.fields = [field];
+          message.channel.send({ embed: botEmbed });
+        } else {
+          message.channel.send(response.message);
+        }
+      });
     } else {
       message.channel.send(
         "Please specify the word you would like to define! :smile:"

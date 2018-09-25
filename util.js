@@ -57,7 +57,69 @@ const helpers = {
 };
 
 const http = {
-  getDefinition: word => {}
+  getDefinition: (word, callback) => {
+    const options = {
+      hostname: "od-api.oxforddictionaries.com",
+      path: `/api/v1/entries/en/${word}/definitions`,
+      headers: {
+        app_id: config.app_id,
+        app_key: config.app_key
+      }
+    };
+
+    const definition;
+
+    https.get(options, res => {
+      // Capture the error
+      if (res.statusCode === 404) {
+        callback({
+          status: res.statusCode,
+          message: "I couldn't find the word you were looking for :cry:",
+          data: {}
+        });
+      }
+
+      // If the request is successful
+      if (res.statusCode === 200) {
+        let data = "";
+
+        res.on("data", chunk => {
+          data += chunk;
+        });
+
+        res.on("end", () => {
+          definition = http.generateDefinition(data);
+
+          // Capitalise the first letter
+          definition = definition.charAt(0).toUpperCase() + definition.slice(1);
+
+          callback({
+            status: res.statusCode,
+            message: "",
+            data: {
+              definition
+            }
+          });
+        });
+      } else {
+        callback({
+          status: res.statusCode,
+          message: "There was an error with your request :thinking:",
+          data: {}
+        });
+      }
+    });
+  },
+
+  generateDefinition: data => {
+    return JSON
+      .parse(data)
+      .results[0]
+      .lexicalEntries[0]
+      .entries[0]
+      .senses[0]
+      .definitions[0];
+  }
 };
 
 module.exports = {
