@@ -1,5 +1,6 @@
 // We need access to the information within the config file
 const config = require("./config.json");
+const https = require("https");
 
 const discord = {
   getOnlineUsers: users => {
@@ -55,7 +56,12 @@ const helpers = {
   }
 };
 
+const http = {
+  getDefinition: word => {}
+};
+
 module.exports = {
   discord,
-  helpers
+  helpers,
+  http
 };
