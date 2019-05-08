@@ -20,7 +20,7 @@ bot.on("ready", () => {
   bot.user.setActivity(`Defining Words`);
 });
 
-bot.on("message", async message => {
+bot.on("message", message => {
   if (message.author.bot || message.content.indexOf(config.prefix) !== 0)
     return;
 
