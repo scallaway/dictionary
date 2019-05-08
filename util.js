@@ -37,57 +37,61 @@ const http = {
       }
     };
 
-    let definition;
-
     https.get(options, res => {
-      // Capture the error
-      if (res.statusCode === 404) {
-        callback({
-          status: res.statusCode,
-          message: "I couldn't find the word you were looking for :cry:",
-          data: {}
-        });
+      let data = "";
 
-        return;
-      }
+      res.on("data", chunk => {
+        data += chunk;
+      });
 
-      // If the request is successful
-      if (res.statusCode === 200) {
-        let data = "";
+      res.on("end", () => {
+        http.handleResponse(res.statusCode, data, callback);
+      });
 
-        res.on("data", chunk => {
-          data += chunk;
-        });
-
-        res.on("end", () => {
-          definition = http.generateDefinition(data);
-
-          // Capitalise the first letter
-          definition = definition.charAt(0).toUpperCase() + definition.slice(1);
-
-          callback({
-            status: res.statusCode,
-            message: "",
-            data: {
-              definition
-            }
-          });
-
-          return;
-        });
-      } else {
+      res.on("error", e => {
         callback({
           status: res.statusCode,
           message: "There was an error with your request :thinking:",
           data: {}
         });
-      }
+      });
     });
   },
 
-  generateDefinition: data =>
+  handleResponse: (statusCode, data, callback) => {
+    switch (statusCode) {
+      case 404:
+        callback({
+          status: statusCode,
+          message: "I couldn't find the word you were looking for :cry:",
+          data: {}
+        });
+        break;
+
+      case 200:
+        callback({
+          status: statusCode,
+          message: "",
+          data: {
+            definition: http.capitaliseDefinition(http.parseDefinition(data))
+          }
+        });
+        break;
+
+      default:
+        callback({
+          status: 403,
+          message: "There was an error with your request :thinking:",
+          data: {}
+        });
+    }
+  },
+
+  parseDefinition: data =>
     JSON.parse(data).results[0].lexicalEntries[0].entries[0].senses[0]
-      .definitions[0]
+      .definitions[0],
+
+  capitaliseDefinition: data => data.charAt(0).toUpperCase() + data.slice(1)
 };
 
 module.exports = {

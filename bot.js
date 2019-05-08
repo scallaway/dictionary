@@ -5,15 +5,18 @@ const util = require("./util");
 const bot = new Discord.Client();
 
 bot.on("ready", () => {
+  const { discord } = util;
+
   console.log(
-    `Bot is up and running, with ${util.discord.getOnlineUsers(
+    `Bot is up and running, with ${discord.getOnlineUsers(
       bot.users
-    )} online users, in ${util.discord.getTextChannels(
+    )} online users, in ${discord.getTextChannels(
       bot.channels
-    )} text channels and ${util.discord.getVoiceChannels(
+    )} text channels and ${discord.getVoiceChannels(
       bot.channels
     )} voice channels.`
   );
+
   bot.user.setActivity(`Defining Words`);
 });
 
@@ -21,10 +24,11 @@ bot.on("message", async message => {
   if (message.author.bot || message.content.indexOf(config.prefix) !== 0)
     return;
 
-  let args = util.discord.getAllArgs(message);
-  const command = util.discord.getCommand(args);
-
-  let botEmbed = {
+  const { author, createdTimestamp, channel } = message;
+  const { discord, helpers, http } = util;
+  const args = discord.getAllArgs(message);
+  const command = discord.getCommand(args);
+  const botEmbed = {
     color: 000000
   };
 
@@ -32,36 +36,34 @@ bot.on("message", async message => {
     if (args.length > 0) {
       console.log(
         `Command [${config.prefix + command}] Received from ${
-          message.author.username
-        } at ${util.helpers.convertTime(message.createdTimestamp)}`
+          author.username
+        } at ${helpers.convertTime(createdTimestamp)}`
       );
 
       const word = args[0];
 
-      util.http.getDefinition(word, response => {
-        if (response.status === 404) {
-          message.channel.send(response.message);
+      http.getDefinition(word, ({ data = {}, message = "", status }) => {
+        if (status === 404) {
+          channel.send(message);
 
           return;
         }
 
-        if (response.status === 200) {
+        if (status === 200) {
           let field = {
             name: word,
-            value: response.data.definition
+            value: data.definition
           };
 
           botEmbed.title = "Definition";
           botEmbed.fields = [field];
-          message.channel.send({ embed: botEmbed });
+          channel.send({ embed: botEmbed });
         } else {
-          message.channel.send(response.message);
+          channel.send(message);
         }
       });
     } else {
-      message.channel.send(
-        "Please specify the word you would like to define! :smile:"
-      );
+      channel.send("Please specify the word you would like to define! :smile:");
     }
   }
 });
