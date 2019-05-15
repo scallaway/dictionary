@@ -51,7 +51,7 @@ bot.on("message", message => {
 
         if (status === 200) {
           let field = {
-            name: word,
+            name: `${word} - ${data.lexicalCategory}`,
             value: data.definition
           };
 

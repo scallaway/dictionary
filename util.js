@@ -69,11 +69,16 @@ const http = {
         break;
 
       case 200:
+        const entry = http._getFirstEntry(data);
+
         callback({
           status: statusCode,
           message: "",
           data: {
-            definition: http.capitaliseDefinition(http.parseDefinition(data))
+            definition: http._capitaliseDefinition(
+              http._parseDefinition(entry)
+            ),
+            lexicalCategory: http._parseLexicalCategory(entry)
           }
         });
         break;
@@ -87,11 +92,13 @@ const http = {
     }
   },
 
-  parseDefinition: data =>
-    JSON.parse(data).results[0].lexicalEntries[0].entries[0].senses[0]
-      .definitions[0],
+  _getFirstEntry: data => JSON.parse(data).results[0].lexicalEntries[0],
 
-  capitaliseDefinition: data => data.charAt(0).toUpperCase() + data.slice(1)
+  _parseDefinition: data => data.entries[0].senses[0].definitions[0],
+
+  _parseLexicalCategory: data => data.lexicalCategory.text,
+
+  _capitaliseDefinition: data => data.charAt(0).toUpperCase() + data.slice(1)
 };
 
 module.exports = {
