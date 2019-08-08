@@ -1,10 +1,10 @@
 import {Client, Message} from "discord.js";
-const config = require("./config.json");
+const config: Config = require("./config.json");
 import {discord, helpers, http} from './util';
 
 const bot = new Client();
 
-bot.on("ready", () => {
+bot.on("ready", (): void => {
   console.log(
     `Bot is up and running, with ${discord.getOnlineUsers(
       bot.users
@@ -18,15 +18,17 @@ bot.on("ready", () => {
   bot.user.setActivity('Defining Words');
 });
 
-bot.on("message", (message: Message) => {
+bot.on("message", (message: Message): void => {
   if (message.author.bot || message.content.indexOf(config.prefix) !== 0)
     return;
 
   const { author, createdTimestamp, channel } = message;
   const args = discord.getAllArgs(message);
-  const command: String = discord.getCommand(args);
+  const command = discord.getCommand(args);
   const botEmbed = {
-    color: 0
+    color: 0,
+    title: '',
+    fields: []
   };
 
   if (command === "define") {
@@ -39,7 +41,7 @@ bot.on("message", (message: Message) => {
 
       const word = args[0];
 
-      http.getDefinition(word, ({ data = {}, message = "", status }) => {
+      http.getDefinition(word, ({ data, message, status }) => {
         if (status === 404) {
           channel.send(message);
 

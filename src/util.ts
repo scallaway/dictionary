@@ -1,7 +1,7 @@
 // We need access to the information within the config file
-const config = require("./config.json");
+const config: Config = require("./config.json");
 import { get } from 'https';
-import { Collection, Snowflake, User, Channel } from 'discord.js';
+import { Collection, Snowflake, User, Channel, Message } from 'discord.js';
 
 export const discord = {
   /**
@@ -10,16 +10,28 @@ export const discord = {
    * @param {Collection<Snowflake, User>} users A collection of users in the Guild
    * @returns {Number} The number of online users
    */
-  getOnlineUsers: (users: Collection<Snowflake, User>): Number =>
+  getOnlineUsers: (users: Collection<Snowflake, User>): number =>
     users.filter(user => user.presence.status !== "offline" && !user.bot).size,
 
-  getAllArgs: message =>
+  /**
+   * Returns all the arguments that were appended to the command.
+   *
+   * @param {Message} message The input from the user.
+   * @returns {string[]} An array of strings containing the arguments passed.
+   */
+  getAllArgs: (message: Message): string[] =>
     message.content
       .slice(config.prefix.length)
       .trim()
       .split(/ +/g),
 
-  getCommand: args => args.shift().toLowerCase(),
+  /**
+   * Returns just the command that was passed in by the user.
+   *
+   * @param {string[]} args A collection of arguments from the user input.
+   * @returns {string} The command itself.
+   */
+  getCommand: (args: string[]): string => args.shift().toLowerCase(),
 
   /**
    * Gets the number of Voice Channels in a Server
@@ -27,7 +39,7 @@ export const discord = {
    * @param {Collection<Snowflake, Channel>} channels A collection of channels
    * @returns {Number} The number of channels
    */
-  getVoiceChannels: (channels: Collection<Snowflake, Channel>): Number =>
+  getVoiceChannels: (channels: Collection<Snowflake, Channel>): number =>
     channels.filter(channel => channel.type === "voice").size,
 
   /**
@@ -36,16 +48,32 @@ export const discord = {
    * @param {Collection<Snowflake, Channel>} channels A collection of channels
    * @returns {Number} The number of channels
    */
-  getTextChannels: (channels: Collection<Snowflake, Channel>): Number =>
+  getTextChannels: (channels: Collection<Snowflake, Channel>): number =>
     channels.filter(channel => channel.type === "text").size
 };
 
 export const helpers = {
-  convertTime: time => new Date(time).toString()
+  /**
+   * Returns a string representation of Date from the timestamp.
+   *
+   * @param {number} time The timestamp
+   * @returns {string} The time and date as a string
+   */
+  convertTime: (time: number): string => new Date(time).toString()
 };
 
+
 export const http = {
-  getDefinition: (word, callback) => {
+  /**
+   * Gets the definition of a word.
+   *
+   * @param {string} word The word passed in from the user.
+   * @param {({}: DefinitionObject) => void} callback Callback function.
+   */
+  getDefinition: (
+    word: string,
+    callback: ({}: DefinitionObject) => void
+  ): void => {
     const { app_id, app_key } = config;
     const options = {
       hostname: "od-api.oxforddictionaries.com",
@@ -63,27 +91,31 @@ export const http = {
         data += chunk;
       });
 
-      res.on("end", () => {
+      res.on("end", (): void => {
         http.handleResponse(res.statusCode, data, callback);
       });
 
-      res.on("error", e => {
+      res.on("error", (): void => {
         callback({
-          status: res.statusCode,
+          data: {},
           message: "There was an error with your request :thinking:",
-          data: {}
+          status: res.statusCode
         });
       });
     });
   },
 
-  handleResponse: (statusCode, data, callback) => {
+  handleResponse: (
+    statusCode: number,
+    data: string,
+    callback: ({}: DefinitionObject) => void
+  ): void => {
     switch (statusCode) {
       case 404:
         callback({
-          status: statusCode,
+          data: {},
           message: "I couldn't find the word you were looking for :cry:",
-          data: {}
+          status: statusCode
         });
         break;
 
@@ -91,31 +123,55 @@ export const http = {
         const entry = http._getFirstEntry(data);
 
         callback({
-          status: statusCode,
-          message: "",
           data: {
             definition: http._capitaliseDefinition(
               http._parseDefinition(entry)
             ),
             lexicalCategory: http._parseLexicalCategory(entry)
-          }
+          },
+          message: "",
+          status: statusCode
         });
         break;
 
       default:
         callback({
-          status: 403,
+          data: {},
           message: "There was an error with your request :thinking:",
-          data: {}
+          status: 403
         });
     }
   },
 
-  _getFirstEntry: data => JSON.parse(data).results[0].lexicalEntries[0],
+  /**
+   * Gets the first definition entry in the response.
+   *
+   * @param {string} data Unparsed response data.
+   * @returns {FirstDefinitionEntry} The first entry object.
+   */
+  _getFirstEntry: (data: string): FirstDefinitionEntry => JSON.parse(data).results[0].lexicalEntries[0],
 
-  _parseDefinition: data => data.entries[0].senses[0].definitions[0],
+  /**
+   * Gets the definition out of the first entry object.
+   *
+   * @param {FirstDefinitionEntry} data First entry data.
+   * @returns {string} The definition
+   */
+  _parseDefinition: (data: FirstDefinitionEntry): string => data.entries[0].senses[0].definitions[0],
 
-  _parseLexicalCategory: data => data.lexicalCategory.text,
+  /**
+   * Gets the Lexical Category of the word (noun, verb, etc.).
+   *
+   * @param {FirstDefinitionEntry} data The first entry object.
+   * @returns {string} The Lexical Cateory.
+   */
+  _parseLexicalCategory: (data: FirstDefinitionEntry): string => data.lexicalCategory.text,
 
-  _capitaliseDefinition: data => data.charAt(0).toUpperCase() + data.slice(1)
+  /**
+   * Capitalises the first letter of the definition.
+   *
+   * @param {string} data The definition.
+   * @returns {string} The definition with the first letter capitalised.
+   */
+  _capitaliseDefinition: (data: string): string => data.charAt(0).toUpperCase() + data.slice(1)
 };
