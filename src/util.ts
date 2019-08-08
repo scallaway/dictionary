@@ -1,9 +1,16 @@
 // We need access to the information within the config file
 const config = require("./config.json");
-const https = require("https");
+import { get } from 'https';
+import { Collection, Snowflake, User, Channel } from 'discord.js';
 
-const discord = {
-  getOnlineUsers: users =>
+export const discord = {
+  /**
+   * Gets the number of users currently online
+   *
+   * @param {Collection<Snowflake, User>} users A collection of users in the Guild
+   * @returns {Number} The number of online users
+   */
+  getOnlineUsers: (users: Collection<Snowflake, User>): Number =>
     users.filter(user => user.presence.status !== "offline" && !user.bot).size,
 
   getAllArgs: message =>
@@ -14,18 +21,30 @@ const discord = {
 
   getCommand: args => args.shift().toLowerCase(),
 
-  getVoiceChannels: channels =>
+  /**
+   * Gets the number of Voice Channels in a Server
+   *
+   * @param {Collection<Snowflake, Channel>} channels A collection of channels
+   * @returns {Number} The number of channels
+   */
+  getVoiceChannels: (channels: Collection<Snowflake, Channel>): Number =>
     channels.filter(channel => channel.type === "voice").size,
 
-  getTextChannels: channels =>
+  /**
+   * Gets the number of Text Channels in a Server
+   *
+   * @param {Collection<Snowflake, Channel>} channels A collection of channels
+   * @returns {Number} The number of channels
+   */
+  getTextChannels: (channels: Collection<Snowflake, Channel>): Number =>
     channels.filter(channel => channel.type === "text").size
 };
 
-const helpers = {
+export const helpers = {
   convertTime: time => new Date(time).toString()
 };
 
-const http = {
+export const http = {
   getDefinition: (word, callback) => {
     const { app_id, app_key } = config;
     const options = {
@@ -37,7 +56,7 @@ const http = {
       }
     };
 
-    https.get(options, res => {
+    get(options, res => {
       let data = "";
 
       res.on("data", chunk => {
@@ -99,10 +118,4 @@ const http = {
   _parseLexicalCategory: data => data.lexicalCategory.text,
 
   _capitaliseDefinition: data => data.charAt(0).toUpperCase() + data.slice(1)
-};
-
-module.exports = {
-  discord,
-  helpers,
-  http
 };

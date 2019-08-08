@@ -1,12 +1,10 @@
-const Discord = require("discord.js");
+import {Client, Message} from "discord.js";
 const config = require("./config.json");
-const util = require("./util");
+import {discord, helpers, http} from './util';
 
-const bot = new Discord.Client();
+const bot = new Client();
 
 bot.on("ready", () => {
-  const { discord } = util;
-
   console.log(
     `Bot is up and running, with ${discord.getOnlineUsers(
       bot.users
@@ -17,19 +15,18 @@ bot.on("ready", () => {
     )} voice channels.`
   );
 
-  bot.user.setActivity(`Defining Words`);
+  bot.user.setActivity('Defining Words');
 });
 
-bot.on("message", message => {
+bot.on("message", (message: Message) => {
   if (message.author.bot || message.content.indexOf(config.prefix) !== 0)
     return;
 
   const { author, createdTimestamp, channel } = message;
-  const { discord, helpers, http } = util;
   const args = discord.getAllArgs(message);
-  const command = discord.getCommand(args);
+  const command: String = discord.getCommand(args);
   const botEmbed = {
-    color: 000000
+    color: 0
   };
 
   if (command === "define") {
