@@ -1,4 +1,6 @@
 {
   "token": "YOUR-DISCORD-TOKEN",
-  "prefix": "!"
+  "prefix": "!",
+  "app_id": "YOUR-OXFORD-APP-ID",
+  "app_key": "YOUR-OXFORD-APP-KEY"
 }
