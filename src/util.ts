@@ -1,5 +1,11 @@
-import { get } from "https";
+import { get, RequestOptions } from "https";
 import { Collection, Snowflake, User, Channel, Message } from "discord.js";
+
+import {
+  IConfig,
+  IFirstDefinitionEntry,
+  IDefinitionObject
+} from "./interfaces";
 
 const config: IConfig = require("./config.json");
 
@@ -31,7 +37,11 @@ export const discord = {
    * @param {string[]} args A collection of arguments from the user input.
    * @returns {string} The command itself.
    */
-  getCommand: (args: string[]): string => args.shift().toLowerCase(),
+  getCommand: (args: string[]): string | undefined =>
+    // TypeScript can't infer that even though we're using .shift() here, the
+    // value that we return will always be a string given we're checking the
+    // length of the array. Hence the need for the Non-Null Assertion Operator.
+    args.length > 0 ? args.shift()!.toLowerCase() : "",
 
   /**
    * Gets the number of Voice Channels in a Server
@@ -75,7 +85,7 @@ export const http = {
     callback: (definitionObject: IDefinitionObject) => void
   ): void => {
     const { app_id, app_key } = config;
-    const options = {
+    const options: RequestOptions = {
       hostname: "od-api.oxforddictionaries.com",
       path: `/api/v2/entries/en-gb/${word}?fields=definitions`,
       headers: {
@@ -92,14 +102,14 @@ export const http = {
       });
 
       res.on("end", (): void => {
-        http.handleResponse(res.statusCode, data, callback);
+        http.handleResponse(res.statusCode!, data, callback);
       });
 
       res.on("error", (): void => {
         callback({
-          data: {},
+          data: { definition: "", lexicalCategory: "" },
           message: "There was an error with your request :thinking:",
-          status: res.statusCode
+          status: res.statusCode!
         });
       });
     });
@@ -113,7 +123,7 @@ export const http = {
     switch (statusCode) {
       case 404:
         callback({
-          data: {},
+          data: { definition: "", lexicalCategory: "" },
           message: "I couldn't find the word you were looking for :cry:",
           status: statusCode
         });
@@ -136,7 +146,7 @@ export const http = {
 
       default:
         callback({
-          data: {},
+          data: { definition: "", lexicalCategory: "" },
           message: "There was an error with your request :thinking:",
           status: 403
         });

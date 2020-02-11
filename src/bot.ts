@@ -1,4 +1,5 @@
 import { Client, Message } from "discord.js";
+import { IBotEmbed, IConfig, IEmbedField } from "./interfaces";
 const config: IConfig = require("./config.json");
 import { discord, helpers, http } from "./util";
 
@@ -25,7 +26,7 @@ bot.on("message", (message: Message): void => {
   const { author, createdTimestamp, channel } = message;
   const args = discord.getAllArgs(message);
   const command = discord.getCommand(args);
-  const botEmbed = {
+  const botEmbed: IBotEmbed = {
     color: 0,
     title: "",
     fields: []
@@ -49,7 +50,7 @@ bot.on("message", (message: Message): void => {
         }
 
         if (status === 200) {
-          let field = {
+          let field: IEmbedField = {
             name: `${word} - ${data.lexicalCategory}`,
             value: data.definition
           };

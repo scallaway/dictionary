@@ -1,19 +1,24 @@
-interface IConfig {
+import { MessageEmbedField } from "discord.js";
+
+export interface IConfig {
   token: string;
   prefix: string;
   app_id: string;
   app_key: string;
 }
 
-interface ISimpleOxfordResponse {
-  results: [
-    {
-      lexicalEntries: [{}];
-    }
-  ];
+export interface IEmbedField {
+  name: string;
+  value: string;
 }
 
-interface IFirstDefinitionEntry {
+export interface IBotEmbed {
+  color: number;
+  title: string;
+  fields: Array<IEmbedField>;
+}
+
+export interface IFirstDefinitionEntry {
   entries: [
     {
       senses: [{ definitions: string[] }];
@@ -22,10 +27,10 @@ interface IFirstDefinitionEntry {
   lexicalCategory: { text: string };
 }
 
-interface IDefinitionObject {
+export interface IDefinitionObject {
   data: {
-    definition?: string;
-    lexicalCategory?: string;
+    definition: string;
+    lexicalCategory: string;
   };
   message: string;
   status: number;

@@ -1,23 +1,27 @@
 {
-  "name": "basic-bot",
+  "name": "dictionary",
   "version": "1.0.1",
-  "description": "A very simple boilerplate for creating Discord Bots",
+  "description": "A simple dictionary Discord bot",
   "main": "bot.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/scallaway/basic-bot.git"
+    "url": "git+https://github.com/scallaway/dictionary.git"
   },
   "keywords": [],
   "author": "Scott Callaway",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/scallaway/basic-bot/issues"
+    "url": "https://github.com/scallaway/dictionary/issues"
   },
-  "homepage": "https://github.com/scallaway/basic-bot#readme",
+  "homepage": "https://github.com/scallaway/dictionary#readme",
+  "scripts": {
+    "build": "rm -rf dist && tsc"
+  },
   "dependencies": {
+    "discord.js": "^11.5.1"
+  },
+  "devDependencies": {
     "@types/node": "^12.12.26",
-    "awesome-typescript-loader": "^5.2.1",
-    "discord.js": "^11.3.0",
-    "source-map-loader": "^0.2.4"
+    "typescript": "^3.7.5"
   }
 }
