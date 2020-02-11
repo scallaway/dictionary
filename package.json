@@ -15,7 +15,7 @@
   },
   "homepage": "https://github.com/scallaway/dictionary#readme",
   "scripts": {
-    "build": "rm -rf dist && tsc"
+    "build": "rm -rf dist && tsc && cp config.json dist/"
   },
   "dependencies": {
     "discord.js": "^11.5.1"
