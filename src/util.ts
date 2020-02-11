@@ -1,14 +1,14 @@
-// We need access to the information within the config file
-const config: Config = require("./config.json");
-import { get } from 'https';
-import { Collection, Snowflake, User, Channel, Message } from 'discord.js';
+import { get } from "https";
+import { Collection, Snowflake, User, Channel, Message } from "discord.js";
+
+const config: IConfig = require("./config.json");
 
 export const discord = {
   /**
    * Gets the number of users currently online
    *
    * @param {Collection<Snowflake, User>} users A collection of users in the Guild
-   * @returns {Number} The number of online users
+   * @returns {number} The number of online users
    */
   getOnlineUsers: (users: Collection<Snowflake, User>): number =>
     users.filter(user => user.presence.status !== "offline" && !user.bot).size,
@@ -37,7 +37,7 @@ export const discord = {
    * Gets the number of Voice Channels in a Server
    *
    * @param {Collection<Snowflake, Channel>} channels A collection of channels
-   * @returns {Number} The number of channels
+   * @returns {number} The number of channels
    */
   getVoiceChannels: (channels: Collection<Snowflake, Channel>): number =>
     channels.filter(channel => channel.type === "voice").size,
@@ -46,7 +46,7 @@ export const discord = {
    * Gets the number of Text Channels in a Server
    *
    * @param {Collection<Snowflake, Channel>} channels A collection of channels
-   * @returns {Number} The number of channels
+   * @returns {number} The number of channels
    */
   getTextChannels: (channels: Collection<Snowflake, Channel>): number =>
     channels.filter(channel => channel.type === "text").size
@@ -62,17 +62,17 @@ export const helpers = {
   convertTime: (time: number): string => new Date(time).toString()
 };
 
-
 export const http = {
   /**
    * Gets the definition of a word.
    *
    * @param {string} word The word passed in from the user.
-   * @param {({}: DefinitionObject) => void} callback Callback function.
+   * @param {(definitionObject: DefinitionObject) => void} callback Callback
+   * function.
    */
   getDefinition: (
     word: string,
-    callback: ({}: DefinitionObject) => void
+    callback: (definitionObject: IDefinitionObject) => void
   ): void => {
     const { app_id, app_key } = config;
     const options = {
@@ -108,7 +108,7 @@ export const http = {
   handleResponse: (
     statusCode: number,
     data: string,
-    callback: ({}: DefinitionObject) => void
+    callback: (definitionObject: IDefinitionObject) => void
   ): void => {
     switch (statusCode) {
       case 404:
@@ -149,7 +149,8 @@ export const http = {
    * @param {string} data Unparsed response data.
    * @returns {FirstDefinitionEntry} The first entry object.
    */
-  _getFirstEntry: (data: string): FirstDefinitionEntry => JSON.parse(data).results[0].lexicalEntries[0],
+  _getFirstEntry: (data: string): IFirstDefinitionEntry =>
+    JSON.parse(data).results[0].lexicalEntries[0],
 
   /**
    * Gets the definition out of the first entry object.
@@ -157,7 +158,8 @@ export const http = {
    * @param {FirstDefinitionEntry} data First entry data.
    * @returns {string} The definition
    */
-  _parseDefinition: (data: FirstDefinitionEntry): string => data.entries[0].senses[0].definitions[0],
+  _parseDefinition: (data: IFirstDefinitionEntry): string =>
+    data.entries[0].senses[0].definitions[0],
 
   /**
    * Gets the Lexical Category of the word (noun, verb, etc.).
@@ -165,7 +167,8 @@ export const http = {
    * @param {FirstDefinitionEntry} data The first entry object.
    * @returns {string} The Lexical Cateory.
    */
-  _parseLexicalCategory: (data: FirstDefinitionEntry): string => data.lexicalCategory.text,
+  _parseLexicalCategory: (data: IFirstDefinitionEntry): string =>
+    data.lexicalCategory.text,
 
   /**
    * Capitalises the first letter of the definition.
@@ -173,5 +176,6 @@ export const http = {
    * @param {string} data The definition.
    * @returns {string} The definition with the first letter capitalised.
    */
-  _capitaliseDefinition: (data: string): string => data.charAt(0).toUpperCase() + data.slice(1)
+  _capitaliseDefinition: (data: string): string =>
+    data.charAt(0).toUpperCase() + data.slice(1)
 };

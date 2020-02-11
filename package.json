@@ -1,6 +1,6 @@
 {
   "name": "basic-bot",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A very simple boilerplate for creating Discord Bots",
   "main": "bot.js",
   "repository": {
@@ -15,7 +15,7 @@
   },
   "homepage": "https://github.com/scallaway/basic-bot#readme",
   "dependencies": {
-    "@types/node": "^12.7.1",
+    "@types/node": "^12.12.26",
     "awesome-typescript-loader": "^5.2.1",
     "discord.js": "^11.3.0",
     "source-map-loader": "^0.2.4"

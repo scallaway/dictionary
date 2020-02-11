@@ -1,37 +1,32 @@
-interface Config {
-  token: string,
-  prefix: string,
-  app_id: string,
-  app_key: string
+interface IConfig {
+  token: string;
+  prefix: string;
+  app_id: string;
+  app_key: string;
 }
 
-
-interface SimpleOxfordResponse {
+interface ISimpleOxfordResponse {
   results: [
     {
-      lexicalEntries: [
-        {
-
-        }
-      ]
+      lexicalEntries: [{}];
     }
-  ]
+  ];
 }
 
-interface FirstDefinitionEntry {
+interface IFirstDefinitionEntry {
   entries: [
     {
-      senses: [{ definitions: string[] }]
+      senses: [{ definitions: string[] }];
     }
-  ],
-  lexicalCategory: { text: string }
+  ];
+  lexicalCategory: { text: string };
 }
 
-interface DefinitionObject {
+interface IDefinitionObject {
   data: {
-    definition?: string,
-    lexicalCategory?: string
-  },
-  message: string,
-  status: number
+    definition?: string;
+    lexicalCategory?: string;
+  };
+  message: string;
+  status: number;
 }

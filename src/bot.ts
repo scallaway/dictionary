@@ -1,6 +1,6 @@
-import {Client, Message} from "discord.js";
-const config: Config = require("./config.json");
-import {discord, helpers, http} from './util';
+import { Client, Message } from "discord.js";
+const config: IConfig = require("./config.json");
+import { discord, helpers, http } from "./util";
 
 const bot = new Client();
 
@@ -15,7 +15,7 @@ bot.on("ready", (): void => {
     )} voice channels.`
   );
 
-  bot.user.setActivity('Defining Words');
+  bot.user.setActivity("Defining Words");
 });
 
 bot.on("message", (message: Message): void => {
@@ -27,7 +27,7 @@ bot.on("message", (message: Message): void => {
   const command = discord.getCommand(args);
   const botEmbed = {
     color: 0,
-    title: '',
+    title: "",
     fields: []
   };
 
