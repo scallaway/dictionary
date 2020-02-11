@@ -150,7 +150,9 @@ export const http = {
    * @returns {FirstDefinitionEntry} The first entry object.
    */
   _getFirstEntry: (data: string): IFirstDefinitionEntry =>
-    JSON.parse(data).results[0].lexicalEntries[0],
+    JSON.parse(data).results[0].lexicalEntries.find(lex =>
+      lex.hasOwnProperty("entries")
+    ),
 
   /**
    * Gets the definition out of the first entry object.
