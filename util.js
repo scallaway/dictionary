@@ -92,7 +92,10 @@ const http = {
     }
   },
 
-  _getFirstEntry: data => JSON.parse(data).results[0].lexicalEntries[0],
+  _getFirstEntry: data =>
+    JSON.parse(data).results[0].lexicalEntries.find(lex =>
+      lex.hasOwnProperty("entries")
+    ),
 
   _parseDefinition: data => data.entries[0].senses[0].definitions[0],
 
