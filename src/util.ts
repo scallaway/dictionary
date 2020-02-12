@@ -1,13 +1,22 @@
 import { get, RequestOptions } from "https";
 import { Collection, Snowflake, User, Channel, Message } from "discord.js";
 
+require("dotenv").config();
+
 import {
   IConfig,
   IFirstDefinitionEntry,
   IDefinitionObject
 } from "./interfaces";
 
-const config: IConfig = require("./config.json");
+const prefix = process.env["COMMAND_PREFIX"];
+const app_id = process.env["APP_ID"];
+const app_key = process.env["APP_KEY"];
+
+if (!prefix) {
+  console.error("Prefix must be provided");
+  process.exit(1);
+}
 
 export const discord = {
   /**
@@ -27,7 +36,7 @@ export const discord = {
    */
   getAllArgs: (message: Message): string[] =>
     message.content
-      .slice(config.prefix.length)
+      .slice(prefix.length)
       .trim()
       .split(/ +/g),
 
@@ -84,7 +93,6 @@ export const http = {
     word: string,
     callback: (definitionObject: IDefinitionObject) => void
   ): void => {
-    const { app_id, app_key } = config;
     const options: RequestOptions = {
       hostname: "od-api.oxforddictionaries.com",
       path: `/api/v2/entries/en-gb/${word}?fields=definitions`,

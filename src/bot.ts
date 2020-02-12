@@ -1,9 +1,23 @@
 import { Client, Message } from "discord.js";
 import { IBotEmbed, IConfig, IEmbedField } from "./interfaces";
-const config: IConfig = require("./config.json");
 import { discord, helpers, http } from "./util";
 
+require("dotenv").config();
+
 const bot = new Client();
+
+const token = process.env["DISCORD_TOKEN"];
+const prefix = process.env["COMMAND_PREFIX"];
+
+if (!token) {
+  console.error("Token must be provided.");
+  process.exit(1);
+}
+
+if (!prefix) {
+  console.error("Prefix must be provided.");
+  process.exit(1);
+}
 
 bot.on("ready", (): void => {
   console.log(
@@ -20,8 +34,7 @@ bot.on("ready", (): void => {
 });
 
 bot.on("message", (message: Message): void => {
-  if (message.author.bot || message.content.indexOf(config.prefix) !== 0)
-    return;
+  if (message.author.bot || message.content.indexOf(prefix) !== 0) return;
 
   const { author, createdTimestamp, channel } = message;
   const args = discord.getAllArgs(message);
@@ -35,7 +48,7 @@ bot.on("message", (message: Message): void => {
   if (command === "define") {
     if (args.length > 0) {
       console.log(
-        `Command [${config.prefix + command}] Received from ${
+        `Command [${prefix + command}] Received from ${
           author.username
         } at ${helpers.convertTime(createdTimestamp)}`
       );
@@ -68,4 +81,4 @@ bot.on("message", (message: Message): void => {
   }
 });
 
-bot.login(config.token);
+bot.login(token);

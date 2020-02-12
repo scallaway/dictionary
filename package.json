@@ -15,10 +15,11 @@
   },
   "homepage": "https://github.com/scallaway/dictionary#readme",
   "scripts": {
-    "build": "rm -rf dist && tsc && cp config.json dist/"
+    "build": "rm -rf dist && tsc && cp .env dist/"
   },
   "dependencies": {
-    "discord.js": "^11.5.1"
+    "discord.js": "^11.5.1",
+    "dotenv": "^8.2.0"
   },
   "devDependencies": {
     "@types/node": "^12.12.26",
