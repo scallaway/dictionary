@@ -15,6 +15,6 @@
   },
   "homepage": "https://github.com/scallaway/basic-bot#readme",
   "dependencies": {
-    "discord.js": "^11.3.0"
+    "discord.js": "^12.1.1"
   }
 }
