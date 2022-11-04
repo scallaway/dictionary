@@ -1,20 +1,35 @@
 {
   "name": "basic-bot",
-  "version": "1.0.1",
+  "version": "2.0.0",
+  "type": "module",
   "description": "A very simple boilerplate for creating Discord Bots",
   "main": "bot.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/scallaway/basic-bot.git"
+    "url": "git+https://github.com/scallaway/dictionary"
   },
   "keywords": [],
   "author": "Scott Callaway",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/scallaway/basic-bot/issues"
+    "url": "https://github.com/scallaway/dictionary/issues"
   },
-  "homepage": "https://github.com/scallaway/basic-bot#readme",
+  "scripts": {
+    "start": "node ./index.js"
+  },
+  "homepage": "https://github.com/scallaway/dictionary#readme",
+  "devDependencies": {
+    "bun-types": "^0.2.2",
+    "discord-api-types": "^0.37.16",
+    "eslint": "^8.26.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "got": "^12.5.2",
+    "prettier": "^2.7.1"
+  },
   "dependencies": {
-    "discord.js": "^12.1.1"
-  }
+    "discord.js": "^14.6.0",
+    "dotenv": "^16.0.3"
+  },
+  "packageManager": "yarn@3.2.4"
 }
